@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tớ thích cậu 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Quicksand',sans-serif;
+}
+
+html,body{
+  height:100%;
+  width:100%;
+  overflow:hidden;
+}
+
+body{
+  background:#f9e3e3;
+}
+
+/* Nhạc ẩn */
+audio{
+  display:none;
+}
+
+/* Author */
+.author{
+  position:fixed;
+  bottom:5px;
+  right:10px;
+  font-size:10px;
+  color:rgba(0,0,0,0.2);
+  user-select:none;
+}
+
+#intro,#mainContent{
+  position:absolute;
+  top:0;
+  left:0;
+  height:100vh;
+  width:100vw;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  padding:20px;
+  text-align:center;
+}
+
+#intro.active,#mainContent.active{
+  display:flex;
+}
+
+button{
+  font-size:16px;
+  padding:12px 25px;
+  margin:10px;
+  border:none;
+  border-radius:10px;
+  background:#ff69b4;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+  box-shadow:0 3px 8px rgba(255,105,180,0.5);
+}
+
+button:hover{
+  background:#ff1493;
+}
+
+#line{
+  background:#fff;
+  border-radius:15px;
+  padding:30px 40px;
+  font-size:26px;
+  color:#d6336c;
+  min-height:120px;
+  margin-bottom:20px;
+}
+
+.final{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  padding:20px;
+  background:#fff;
+  border-radius:15px;
+  font-size:22px;
+  max-width:400px;
+}
+
+.final.active{display:flex;}
+
+.button-group{display:flex;gap:15px;}
+
+.yesContent{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+}
+
+.yesContent.active{display:flex;}
+
+.yesContent img{
+  max-width:250px;
+  border-radius:15px;
+  box-shadow:0 4px 15px rgba(255,105,180,0.5);
+}
+
+/* Tim bay */
+.heart{
+  position:fixed;
+  font-size:18px;
+  pointer-events:none;
+  animation:floatUp 4s linear forwards;
+  z-index:999;
+}
+
+@keyframes floatUp{
+  0%{
+    transform:translateY(0) scale(1);
+    opacity:1;
+  }
+  100%{
+    transform:translateY(-250px) scale(1.6);
+    opacity:0;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NHẠC TỰ CHẠY -->
+<audio id="bgMusic" autoplay loop>
+  <source src="totinh.mp3" type="audio/mpeg">
+</audio>
+
+<div id="intro" class="active">
+  <h1>minh co dieu muon noi 💌</h1>
+  <button id="startBtn">Nhấn vào đây đi</button>
+</div>
+
+<div id="mainContent">
+  <div id="line"></div>
+
+  <div id="final" class="final">
+    <p>đồng ý làm ngyeu minh nhen!!! 🫶😍</p>
+    <div class="button-group">
+      <button id="btnYes">Dạ🫶</button>
+      <button id="btnNo">Đéo</button>
+    </div>
+  </div>
+
+  <div id="msgYes" class="yesContent">
+    <h1>Ahihi 😍💖</h1>
+    <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif">
+  </div>
+</div>
+
+<div class="author">Author: Quang Liem</div>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+
+const startButton=document.getElementById('startBtn');
+const intro=document.getElementById('intro');
+const mainContent=document.getElementById('mainContent');
+const lineElement=document.getElementById('line');
+const finalBlock=document.getElementById('final');
+const msgYes=document.getElementById('msgYes');
+const btnNo=document.getElementById('btnNo');
+const btnYes=document.getElementById('btnYes');
+const bgMusic=document.getElementById('bgMusic');
+
+bgMusic.play().catch(()=>{});
+
+const lines=[
+"Minh co dieu muon noi...",
+"nhma ngại vl..",
+"...",
+"..",
+"minh thich b👉👈"
+];
+
+let currentLine=0;
+let heartInterval;
+
+startButton.addEventListener('click',()=>{
+intro.classList.remove('active');
+mainContent.classList.add('active');
+showLine(lines[currentLine]);
+});
+
+function showLine(text){
+lineElement.innerHTML='';
+let charIndex=0;
+const p=document.createElement('p');
+lineElement.appendChild(p);
+
+const typing=setInterval(()=>{
+if(charIndex<text.length){
+p.innerHTML+=text.charAt(charIndex);
+charIndex++;
+}else{
+clearInterval(typing);
+setTimeout(()=>{
+currentLine++;
+if(currentLine<lines.length){
+showLine(lines[currentLine]);
+}else{
+lineElement.style.display='none';
+finalBlock.classList.add('active');
+}
+},800);
+}
+},60);
+}
+
+btnNo.addEventListener('click',()=>{
+const maxX=window.innerWidth-btnNo.offsetWidth;
+const maxY=window.innerHeight-btnNo.offsetHeight;
+btnNo.style.position='fixed';
+btnNo.style.left=Math.random()*maxX+'px';
+btnNo.style.top=Math.random()*maxY+'px';
+});
+
+btnYes.addEventListener('click',()=>{
+finalBlock.classList.remove('active');
+msgYes.classList.add('active');
+heartInterval=setInterval(createHeart,300);
+});
+
+function createHeart(){
+const heart=document.createElement('div');
+heart.className='heart';
+heart.innerHTML='💖';
+heart.style.left=Math.random()*window.innerWidth+'px';
+heart.style.top=(window.innerHeight-50)+'px';
+document.body.appendChild(heart);
+setTimeout(()=>{heart.remove();},4000);
+}
+
+});
+</script>
+
+</body>
+</html>
